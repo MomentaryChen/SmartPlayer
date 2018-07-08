@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.widget.SlidingPaneLayout;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
@@ -100,12 +101,38 @@ public class SmartPlayer extends Activity {
 
 	LinearLayout lLayout = null;
 	FrameLayout fFrameLayout = null;
-
 	private Context myContext;
 
 	static {
 		System.loadLibrary("SmartPlayer");
 	}
+	private void invisibilityAllButton(){
+        btnPopInputUrl.setVisibility(View.INVISIBLE);
+        btnMute.setVisibility(View.INVISIBLE);
+        //btnStartStopPlayback.setVisibility(View.INVISIBLE);
+        //btnStartStopRecorder.setVisibility(View.INVISIBLE);
+        btnRecoderMgr.setVisibility(View.INVISIBLE);
+        btnHardwareDecoder.setVisibility(View.INVISIBLE);
+        btnCaptureImage.setVisibility(View.INVISIBLE);
+        btnFastStartup.setVisibility(View.INVISIBLE);
+        btnSetPlayBuffer.setVisibility(View.INVISIBLE);
+        btnLowLatency.setVisibility(View.INVISIBLE);
+        btnRotation.setVisibility(View.INVISIBLE);
+    }
+
+    private void visibilityAllButton(){
+        btnPopInputUrl.setVisibility(View.VISIBLE);
+        btnMute.setVisibility(View.VISIBLE);
+        //btnStartStopPlayback.setVisibility(View.VISIBLE);
+        //btnStartStopRecorder.setVisibility(View.VISIBLE);
+        btnRecoderMgr.setVisibility(View.VISIBLE);
+        btnHardwareDecoder.setVisibility(View.VISIBLE);
+        btnCaptureImage.setVisibility(View.VISIBLE);
+        btnFastStartup.setVisibility(View.VISIBLE);
+        btnSetPlayBuffer.setVisibility(View.VISIBLE);
+        btnLowLatency.setVisibility(View.VISIBLE);
+        btnRotation.setVisibility(View.VISIBLE);
+    }
 
 	@Override
 	protected void onCreate(Bundle icicle) {
@@ -219,13 +246,13 @@ public class SmartPlayer extends Activity {
 	private void PopFullUrlDialog() {
 		final EditText inputUrlTxt = new EditText(this);
 		inputUrlTxt.setFocusable(true);
-		inputUrlTxt.setText("rtmp://player.daniulive.com:1935/hls/stream");
+		inputUrlTxt.setText("rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov");
 
 		AlertDialog.Builder builderUrl = new AlertDialog.Builder(this);
 		builderUrl
 				.setTitle("如 rtmp://player.daniulive.com:1935/hls/stream123456")
 				.setView(inputUrlTxt).setNegativeButton("取消", null);
-		builderUrl.setPositiveButton("确认",
+		builderUrl.setPositiveButton("確認",
 				new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int which) {
@@ -300,19 +327,19 @@ public class SmartPlayer extends Activity {
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		rl.topMargin = getWindowManager().getDefaultDisplay().getHeight() - 270;
 		copyRightLinearLayout.setLayoutParams(rl);
-
+		/*
 		txtCopyright = new TextView(this);
 		txtCopyright.setLayoutParams(new LinearLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		txtCopyright
 				.setText("Copyright 2014~2016 www.daniulive.com v1.0.16.0326");
 		copyRightLinearLayout.addView(txtCopyright, 0);
-
+		/*
 		txtQQQun = new TextView(this);
 		txtQQQun.setLayoutParams(new LinearLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		txtQQQun.setText("QQ群:294891451,  499687479");
-		copyRightLinearLayout.addView(txtQQQun, 1);
+		copyRightLinearLayout.addView(txtQQQun, 1);*/
 
 		/* PopInput button */
 		/*
@@ -324,7 +351,7 @@ public class SmartPlayer extends Activity {
 		 */
 
 		btnPopInputUrl = new Button(this);
-		btnPopInputUrl.setText("输入url");
+		btnPopInputUrl.setText("輸入url");
 		btnPopInputUrl.setLayoutParams(new LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		lLinearLayout.addView(btnPopInputUrl);
@@ -335,7 +362,7 @@ public class SmartPlayer extends Activity {
 		if (!isMute) {
 			btnMute.setText("静音 ");
 		} else {
-			btnMute.setText("取消静音 ");
+			btnMute.setText("取消靜音");
 		}
 
 		btnMute.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -343,6 +370,7 @@ public class SmartPlayer extends Activity {
 		lLinearLayout.addView(btnMute);
 
 		/* switch url button */
+		/*
 		btnSwitchUrl = new Button(this);
 
 		if (!switchUrlFlag) {
@@ -353,15 +381,15 @@ public class SmartPlayer extends Activity {
 
 		btnSwitchUrl.setLayoutParams(new LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		lLinearLayout.addView(btnSwitchUrl);
+		lLinearLayout.addView(btnSwitchUrl);*/
 
 		/* hardware decoder button */
 		btnHardwareDecoder = new Button(this);
 
 		if (!isHardwareDecoder) {
-			btnHardwareDecoder.setText("当前软解码");
+			btnHardwareDecoder.setText("目前軟解碼");
 		} else {
-			btnHardwareDecoder.setText("当前硬解码");
+			btnHardwareDecoder.setText("目前硬解碼");
 		}
 
 		LinearLayout LinearLayoutImage = new LinearLayout(this);
@@ -372,7 +400,7 @@ public class SmartPlayer extends Activity {
 		/* capture image button */
 		btnCaptureImage = new Button(this);
 
-		btnCaptureImage.setText("快照");
+		btnCaptureImage.setText("拍照");
 		btnCaptureImage.setLayoutParams(new LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		LinearLayoutImage.addView(btnCaptureImage);
@@ -380,13 +408,13 @@ public class SmartPlayer extends Activity {
 		btnRotation = new Button(this);
 
 		if (0 == rotate_degrees) {
-			btnRotation.setText("旋转90度");
+			btnRotation.setText("旋轉90度");
 		} else if (90 == rotate_degrees) {
-			btnRotation.setText("旋转180度");
+			btnRotation.setText("旋轉180度");
 		} else if (180 == rotate_degrees) {
-			btnRotation.setText("旋转270度");
+			btnRotation.setText("旋轉270度");
 		} else if (270 == rotate_degrees) {
-			btnRotation.setText("不旋转");
+			btnRotation.setText("不旋轉");
 		}
 
 		btnRotation.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -407,7 +435,7 @@ public class SmartPlayer extends Activity {
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
 		btnSetPlayBuffer = new Button(this);
-		btnSetPlayBuffer.setText("设置缓冲");
+		btnSetPlayBuffer.setText("設置緩衝");
 		btnSetPlayBuffer.setLayoutParams(new LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		bufferLinearLayout.addView(btnSetPlayBuffer);
@@ -423,13 +451,12 @@ public class SmartPlayer extends Activity {
 		btnLowLatency.setLayoutParams(new LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		bufferLinearLayout.addView(btnLowLatency);
-
 		btnFastStartup = new Button(this);
 
 		if (isFastStartup) {
-			btnFastStartup.setText("停用秒开");
+			btnFastStartup.setText("停用秒開");
 		} else {
-			btnFastStartup.setText("启用秒开");
+			btnFastStartup.setText("啟用秒開");
 		}
 
 		btnFastStartup.setLayoutParams(new LayoutParams(
@@ -450,16 +477,18 @@ public class SmartPlayer extends Activity {
 		/* Start/stop recorder stream button */
 		LinearLayout recorderLinearLayout = new LinearLayout(this);
 		btnStartStopRecorder = new Button(this);
-		btnStartStopRecorder.setText("开始录像 ");
+		btnStartStopRecorder.setText("開始撥放 ");
 		btnStartStopRecorder.setLayoutParams(new LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		recorderLinearLayout.addView(btnStartStopRecorder);
 
 		btnRecoderMgr = new Button(this);
-		btnRecoderMgr.setText("录像管理 ");
+		btnRecoderMgr.setText("錄影管理 ");
 		btnRecoderMgr.setLayoutParams(new LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		recorderLinearLayout.addView(btnRecoderMgr);
+
+
 
 		lLinearLayout.addView(recorderLinearLayout);
 
@@ -491,14 +520,15 @@ public class SmartPlayer extends Activity {
 
 		if (isPlaying) {
 			btnStartStopPlayback.setText("停止播放 ");
+
 		} else {
-			btnStartStopPlayback.setText("开始播放 ");
+			btnStartStopPlayback.setText("開始撥放 ");
 		}
 
 		if (isRecording) {
-			btnStartStopRecorder.setText("停止录像");
+			btnStartStopRecorder.setText("停止錄影");
 		} else {
-			btnStartStopRecorder.setText("开始录像");
+			btnStartStopRecorder.setText("開始錄影");
 		}
 
 		/* PopInput button listener */
@@ -536,7 +566,7 @@ public class SmartPlayer extends Activity {
 			}
 		});
 
-		btnSwitchUrl.setOnClickListener(new Button.OnClickListener() {
+		/*btnSwitchUrl.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
 				switchUrlFlag = !switchUrlFlag;
 
@@ -548,7 +578,6 @@ public class SmartPlayer extends Activity {
 					//switchURL = "rtmp://player.daniulive.com:1935/hls/stream2";
 				} else {
 					btnSwitchUrl.setText("切换url1");
-
 					switchURL = playbackUrl;
 				}
 
@@ -557,16 +586,16 @@ public class SmartPlayer extends Activity {
 							switchURL);
 				}
 			}
-		});
+		});*/
 
 		btnHardwareDecoder.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
 				isHardwareDecoder = !isHardwareDecoder;
 
 				if (isHardwareDecoder) {
-					btnHardwareDecoder.setText("当前硬解码");
+					btnHardwareDecoder.setText("目前軟解碼");
 				} else {
-					btnHardwareDecoder.setText("当前软解码");
+					btnHardwareDecoder.setText("目前硬解碼");
 				}
 
 			}
@@ -595,13 +624,13 @@ public class SmartPlayer extends Activity {
 				rotate_degrees = rotate_degrees % 360;
 
 				if (0 == rotate_degrees) {
-					btnRotation.setText("旋转90度");
+					btnRotation.setText("旋轉90度");
 				} else if (90 == rotate_degrees) {
-					btnRotation.setText("旋转180度");
+					btnRotation.setText("旋轉180度");
 				} else if (180 == rotate_degrees) {
-					btnRotation.setText("旋转270度");
+					btnRotation.setText("旋轉270度");
 				} else if (270 == rotate_degrees) {
-					btnRotation.setText("不旋转");
+					btnRotation.setText("不旋轉");
 				}
 
 				if (playerHandle != 0) {
@@ -638,7 +667,7 @@ public class SmartPlayer extends Activity {
 				if (isFastStartup) {
 					btnFastStartup.setText("停用秒开");
 				} else {
-					btnFastStartup.setText("启用秒开");
+					btnFastStartup.setText("開啟秒开");
 				}
 			}
 		});
@@ -667,7 +696,7 @@ public class SmartPlayer extends Activity {
 						playerHandle = 0;
 					}
 
-					btnStartStopRecorder.setText(" 开始录像");
+					btnStartStopRecorder.setText(" 開始錄影");
 
 					isRecording = false;
 
@@ -694,7 +723,7 @@ public class SmartPlayer extends Activity {
 					btnRecoderMgr.setEnabled(false);
 
 					isRecording = true;
-					btnStartStopRecorder.setText("停止录像");
+					btnStartStopRecorder.setText("停止錄影");
 				}
 			}
 		});
@@ -708,12 +737,11 @@ public class SmartPlayer extends Activity {
 					Log.i(TAG, "Stop playback stream++");
 
 					int iRet = libPlayer.SmartPlayerStopPlay(playerHandle);
-
 					if (iRet != 0) {
 						Log.e(TAG, "SmartPlayerStopPlay strem failed..");
 						return;
 					}
-					
+                    visibilityAllButton();
 					btnHardwareDecoder.setEnabled(true);
 					btnLowLatency.setEnabled(true);
 
@@ -728,11 +756,11 @@ public class SmartPlayer extends Activity {
 					}
 					
 					isPlaying = false;
-					btnStartStopPlayback.setText("开始播放 ");
+					btnStartStopPlayback.setText("開始播放 ");
 					Log.i(TAG, "Stop playback stream--");
 				} else {
 					Log.i(TAG, "Start playback stream++");
-
+                    invisibilityAllButton();
 					if (!isRecording) {
 						InitAndSetConfig();
 					}
@@ -1074,19 +1102,19 @@ public class SmartPlayer extends Activity {
 
 			switch (id) {
 			case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_STARTED:
-				Log.i(TAG, "开始。。");
+				Log.i(TAG, "開始。。");
 				break;
 			case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_CONNECTING:
-				Log.i(TAG, "连接中。。");
+				Log.i(TAG, "連接中。。");
 				break;
 			case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_CONNECTION_FAILED:
-				Log.i(TAG, "连接失败。。");
+				Log.i(TAG, "連接失敗。。");
 				break;
 			case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_CONNECTED:
-				Log.i(TAG, "连接成功。。");
+				Log.i(TAG, "連接成功。。");
 				break;
 			case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_DISCONNECTED:
-				Log.i(TAG, "连接断开。。");
+				Log.i(TAG, "連接中斷。。");
 				break;
 			case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_STOP:
 				Log.i(TAG, "停止播放。。");
@@ -1095,7 +1123,7 @@ public class SmartPlayer extends Activity {
 				Log.i(TAG, "分辨率信息: width: " + param1 + ", height: " + param2);
 				break;
 			case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_NO_MEDIADATA_RECEIVED:
-				Log.i(TAG, "收不到媒体数据，可能是url错误。。");
+				Log.i(TAG, "收不到媒體數據，可能是url錯誤。。");
 				break;
 			case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_SWITCH_URL:
 				Log.i(TAG, "切换播放URL。。");
@@ -1106,15 +1134,15 @@ public class SmartPlayer extends Activity {
 				if (param1 == 0) {
 					Log.i(TAG, "截取快照成功。.");
 				} else {
-					Log.i(TAG, "截取快照失败。.");
+					Log.i(TAG, "截取快照失敗。.");
 				}
 				break;
 				
 			case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_RECORDER_START_NEW_FILE:
-           	 	Log.i(TAG, "[record]开始一个新的录像文件 : " + param3);
+           	 	Log.i(TAG, "[record]開始一个新的录像文件 : " + param3);
                 break;
             case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_ONE_RECORDER_FILE_FINISHED:
-           	 Log.i(TAG, "[record]已生成一个录像文件 : " + param3);
+           	 Log.i(TAG, "[record]已生成一个錄影文件 : " + param3);
                 break;
 
 			case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_START_BUFFERING:
