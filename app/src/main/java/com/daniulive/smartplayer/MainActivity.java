@@ -28,7 +28,9 @@ public class MainActivity extends AppCompatActivity {
         setTime.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this,SettimeActivity.class);
+                startActivity(intent);
             }
         });
 
