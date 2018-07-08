@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -78,8 +79,23 @@ public class SettimeActivity extends AppCompatActivity {
         //ListView 要顯示的內容
         //android.R.layout.simple_list_item_1 為內建樣式，還有其他樣式可自行研究
         upDate();
+        listview.setOnItemClickListener(listviewDoListener);
 
     }
+    private ListView.OnItemClickListener listviewDoListener=new ListView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view,int i, final long l) {
+            new AlertDialog.Builder(SettimeActivity.this).setTitle("是否要刪除")
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setPositiveButton("確認刪除", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteTime((int) l);
+                        }
+                    })
+                    .setNegativeButton("取消", null)
+                    .show();
+        }
+    };
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     void upDate(){
@@ -91,7 +107,6 @@ public class SettimeActivity extends AppCompatActivity {
             listview.setAdapter(adapter);
         }
     }
-
     void insertTime(int hours, int minutes){
         Cursor cursor;
         cursor=getAll("tableTime");
@@ -103,7 +118,10 @@ public class SettimeActivity extends AppCompatActivity {
         db.execSQL("INSERT INTO tableTime(_id,hours,minutes) values ("+ id +","+hours+","+minutes+")");
         upDate();
     }
-    
+    void deleteTime(int _id){
+        db.delete("tableTime", "_id = " + _id , null);
+        upDate();
+    }
     public Cursor getAll(String tableName) {
         Cursor cursor = db.rawQuery("SELECT * FROM "+tableName, null);
         return cursor;
