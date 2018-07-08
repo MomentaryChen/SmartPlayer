@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         watch = (Button) findViewById(R.id.watch);
         setTime = (Button) findViewById(R.id.setTime);
+        setTitle("智慧型寵物寶");
         watch.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {

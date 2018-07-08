@@ -119,7 +119,7 @@ public class SmartPlayer extends Activity {
         //btnStartStopRecorder.setVisibility(View.INVISIBLE);
         btnRecoderMgr.setVisibility(View.INVISIBLE);
         btnHardwareDecoder.setVisibility(View.INVISIBLE);
-        btnCaptureImage.setVisibility(View.INVISIBLE);
+        //btnCaptureImage.setVisibility(View.INVISIBLE);
         btnFastStartup.setVisibility(View.INVISIBLE);
         btnSetPlayBuffer.setVisibility(View.INVISIBLE);
         btnLowLatency.setVisibility(View.INVISIBLE);
@@ -133,7 +133,7 @@ public class SmartPlayer extends Activity {
         //btnStartStopRecorder.setVisibility(View.VISIBLE);
         btnRecoderMgr.setVisibility(View.VISIBLE);
         btnHardwareDecoder.setVisibility(View.VISIBLE);
-        btnCaptureImage.setVisibility(View.VISIBLE);
+        //btnCaptureImage.setVisibility(View.VISIBLE);
         btnFastStartup.setVisibility(View.VISIBLE);
         btnSetPlayBuffer.setVisibility(View.VISIBLE);
         btnLowLatency.setVisibility(View.VISIBLE);
@@ -143,7 +143,6 @@ public class SmartPlayer extends Activity {
 	@Override
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-
 		Log.i(TAG, "Run into OnCreate++");
 
 		libPlayer = new SmartPlayerJniV2();
