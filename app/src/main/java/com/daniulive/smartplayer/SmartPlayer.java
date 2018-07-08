@@ -18,16 +18,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,6 +41,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.videoengine.*;
 import com.eventhandle.NTSmartEventCallbackV2;
 import com.eventhandle.NTSmartEventID;
@@ -95,6 +100,7 @@ public class SmartPlayer extends Activity {
 	Button btnSetPlayBuffer;
 	Button btnLowLatency;
 	Button btnRotation;
+	Button btnFood;
 	Button btnSwitchUrl;
 	TextView txtCopyright;
 	TextView txtQQQun;
@@ -290,13 +296,14 @@ public class SmartPlayer extends Activity {
 	}
 
 	/* Generate basic layout */
-	private void inflateLayout(int orientation) {
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void inflateLayout(int orientation) {
 		if (null == lLayout)
 			lLayout = new LinearLayout(this);
 
-		addContentView(lLayout, new android.view.ViewGroup.LayoutParams(
-				android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-				android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
+		addContentView(lLayout, new LayoutParams(
+				LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT));
 
 		lLayout.setOrientation(orientation);
 
@@ -322,11 +329,27 @@ public class SmartPlayer extends Activity {
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
 		LinearLayout copyRightLinearLayout = new LinearLayout(this);
-		copyRightLinearLayout.setOrientation(LinearLayout.VERTICAL);
-		RelativeLayout.LayoutParams rl = new RelativeLayout.LayoutParams(
+		copyRightLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+        RelativeLayout.LayoutParams rl = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		rl.topMargin = getWindowManager().getDefaultDisplay().getHeight() - 270;
+		rl.leftMargin = getWindowManager().getDefaultDisplay().getWidth()*4/5;
 		copyRightLinearLayout.setLayoutParams(rl);
+
+		btnFood = new Button(this);
+        btnFood.setText("餵食");
+        btnFood.setLayoutParams(new LinearLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        copyRightLinearLayout.addView(btnFood);
+
+        btnFood.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(SmartPlayer.this,"以餵食", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 		/*
 		txtCopyright = new TextView(this);
 		txtCopyright.setLayoutParams(new LinearLayout.LayoutParams(
@@ -357,6 +380,8 @@ public class SmartPlayer extends Activity {
 		lLinearLayout.addView(btnPopInputUrl);
 
 		/* mute button */
+
+
 		btnMute = new Button(this);
 
 		if (!isMute) {
@@ -487,13 +512,10 @@ public class SmartPlayer extends Activity {
 		btnRecoderMgr.setLayoutParams(new LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		recorderLinearLayout.addView(btnRecoderMgr);
-
-
-
 		lLinearLayout.addView(recorderLinearLayout);
 
-		btnRecoderMgr.setOnClickListener(new ButtonRecorderMangerListener());
 
+		btnRecoderMgr.setOnClickListener(new ButtonRecorderMangerListener());
 		outLinearLayout.addView(lLinearLayout, 0);
 		outLinearLayout.addView(copyRightLinearLayout, 1);
 		fFrameLayout.addView(outLinearLayout, 1);
@@ -535,22 +557,22 @@ public class SmartPlayer extends Activity {
 
 		/*
 		 * btnPopInputText.setOnClickListener(new Button.OnClickListener() {
-		 * 
+		 *
 		 * public void onClick(View v) { Log.i(TAG,
 		 * "Run into input playback ID++");
-		 * 
+		 *
 		 * PopDialog();
-		 * 
+		 *
 		 * Log.i(TAG, "Run out from input playback ID--"); } });
 		 */
 
-		btnPopInputUrl.setOnClickListener(new Button.OnClickListener() {
+		btnPopInputUrl.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				PopFullUrlDialog();
 			}
 		});
 
-		btnMute.setOnClickListener(new Button.OnClickListener() {
+		btnMute.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				isMute = !isMute;
 
@@ -588,7 +610,7 @@ public class SmartPlayer extends Activity {
 			}
 		});*/
 
-		btnHardwareDecoder.setOnClickListener(new Button.OnClickListener() {
+		btnHardwareDecoder.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				isHardwareDecoder = !isHardwareDecoder;
 
@@ -601,7 +623,7 @@ public class SmartPlayer extends Activity {
 			}
 		});
 
-		btnCaptureImage.setOnClickListener(new Button.OnClickListener() {
+		btnCaptureImage.setOnClickListener(new OnClickListener() {
 			@SuppressLint("SimpleDateFormat")
 			public void onClick(View v) {
 
@@ -617,7 +639,7 @@ public class SmartPlayer extends Activity {
 			}
 		});
 
-		btnRotation.setOnClickListener(new Button.OnClickListener() {
+		btnRotation.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 
 				rotate_degrees += 90;
@@ -640,13 +662,13 @@ public class SmartPlayer extends Activity {
 			}
 		});
 
-		btnSetPlayBuffer.setOnClickListener(new Button.OnClickListener() {
+		btnSetPlayBuffer.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				PopSettingBufferDialog();
 			}
 		});
 
-		btnLowLatency.setOnClickListener(new Button.OnClickListener() {
+		btnLowLatency.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				isLowLatency = !isLowLatency;
 
@@ -660,7 +682,7 @@ public class SmartPlayer extends Activity {
 			}
 		});
 
-		btnFastStartup.setOnClickListener(new Button.OnClickListener() {
+		btnFastStartup.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				isFastStartup = !isFastStartup;
 
@@ -672,26 +694,26 @@ public class SmartPlayer extends Activity {
 			}
 		});
 
-		btnStartStopRecorder.setOnClickListener(new Button.OnClickListener() {
+		btnStartStopRecorder.setOnClickListener(new OnClickListener() {
 
 			// @Override
 			public void onClick(View v) {
 
 				if (isRecording) {
-					
+
 					int iRet = libPlayer.SmartPlayerStopRecorder(playerHandle);
 
 					if (iRet != 0) {
 						Log.e(TAG, "SmartPlayerStopRecorder strem failed..");
 						return;
 					}
-					
+
 					if (!isPlaying) {
 						btnPopInputUrl.setEnabled(true);
 						btnSetPlayBuffer.setEnabled(true);
-						btnFastStartup.setEnabled(true);		
+						btnFastStartup.setEnabled(true);
 						btnRecoderMgr.setEnabled(true);
-						
+
 						libPlayer.SmartPlayerClose(playerHandle);
 						playerHandle = 0;
 					}
@@ -728,7 +750,7 @@ public class SmartPlayer extends Activity {
 			}
 		});
 
-		btnStartStopPlayback.setOnClickListener(new Button.OnClickListener() {
+		btnStartStopPlayback.setOnClickListener(new OnClickListener() {
 
 			// @Override
 			public void onClick(View v) {
@@ -745,16 +767,16 @@ public class SmartPlayer extends Activity {
 					btnHardwareDecoder.setEnabled(true);
 					btnLowLatency.setEnabled(true);
 
-					if (!isRecording) {		
+					if (!isRecording) {
 						btnPopInputUrl.setEnabled(true);
 						btnSetPlayBuffer.setEnabled(true);
 						btnFastStartup.setEnabled(true);
-						
+
 						btnRecoderMgr.setEnabled(true);
 						libPlayer.SmartPlayerClose(playerHandle);
 						playerHandle = 0;
 					}
-					
+
 					isPlaying = false;
 					btnStartStopPlayback.setText("開始播放 ");
 					Log.i(TAG, "Stop playback stream--");
@@ -764,7 +786,7 @@ public class SmartPlayer extends Activity {
 					if (!isRecording) {
 						InitAndSetConfig();
 					}
-					
+
 					// 如果第二个参数设置为null，则播放纯音频
 					libPlayer.SmartPlayerSetSurface(playerHandle, sSurfaceView);
 					// External Render test
@@ -795,7 +817,7 @@ public class SmartPlayer extends Activity {
 							: 0);
 
 					libPlayer.SmartPlayerSetRotation(playerHandle, rotate_degrees);
-					
+
 					int iPlaybackRet = libPlayer
 							.SmartPlayerStartPlay(playerHandle);
 
@@ -985,109 +1007,109 @@ public class SmartPlayer extends Activity {
     	{
     		if ( y_buffer_ == null )
     			return;
-    		
+
     		if ( u_buffer_ == null )
     			return;
-    		
+
     		if ( v_buffer_ == null )
     			return;
-    		
-      
+
+
     		y_buffer_.rewind();
-    		
+
     		u_buffer_.rewind();
-    		
+
     		v_buffer_.rewind();
-    		
+
     		/*
     		if ( !is_saved_image )
     		{
     			is_saved_image = true;
-    			
+
     			int y_len = y_row_bytes_*height_;
-    			
+
     			int u_len = u_row_bytes_*((height_+1)/2);
     			int v_len = v_row_bytes_*((height_+1)/2);
-    			
+
     			int data_len = y_len + (y_row_bytes_*((height_+1)/2));
-    			
+
     			byte[] nv21_data = new byte[data_len];
-    			
+
     			byte[] u_data = new byte[u_len];
     			byte[] v_data = new byte[v_len];
-    			
+
     			y_buffer_.get(nv21_data, 0, y_len);
     			u_buffer_.get(u_data, 0, u_len);
     			v_buffer_.get(v_data, 0, v_len);
-    			
+
     			int[] strides = new int[2];
     			strides[0] = y_row_bytes_;
     			strides[1] = y_row_bytes_;
-    			
+
 
     			int loop_row_c = ((height_+1)/2);
     			int loop_c = ((width_+1)/2);
- 
+
     			int dst_row = y_len;
     			int src_v_row = 0;
     			int src_u_row = 0;
-    			
+
     			for ( int i = 0; i < loop_row_c; ++i)
     			{
     				int dst_pos = dst_row;
-    				
+
     				for ( int j = 0; j <loop_c; ++j )
     				{
-    					nv21_data[dst_pos++] = v_data[src_v_row + j];  					
+    					nv21_data[dst_pos++] = v_data[src_v_row + j];
     					nv21_data[dst_pos++] = u_data[src_u_row + j];
     				}
-    				
+
     				dst_row   += y_row_bytes_;
     				src_v_row += v_row_bytes_;
     				src_u_row += u_row_bytes_;
     			}
-    			
+
     			String imagePath = "/sdcard" + "/" + "testonv21" + ".jpeg";
-    			
+
     			Log.e(TAG, "I420ExternalRender::begin test save iamge++ image_path:" + imagePath);
-    			
+
     			try
     			{
     				File file = new File(imagePath);
-        			
-        			FileOutputStream image_os = new FileOutputStream(file);   
-        			
-        			YuvImage image = new YuvImage(nv21_data, ImageFormat.NV21, width_, height_, strides);  
-        			
-        			image.compressToJpeg(new android.graphics.Rect(0, 0, width_, height_), 50, image_os);  
-        			
-        			image_os.flush();  
+
+        			FileOutputStream image_os = new FileOutputStream(file);
+
+        			YuvImage image = new YuvImage(nv21_data, ImageFormat.NV21, width_, height_, strides);
+
+        			image.compressToJpeg(new android.graphics.Rect(0, 0, width_, height_), 50, image_os);
+
+        			image_os.flush();
         			image_os.close();
     			}
     			catch(IOException e)
     			{
     				e.printStackTrace();
     			}
-    		
+
     			Log.e(TAG, "I420ExternalRender::begin test save iamge--");
     		}
-    		
+
     		*/
-    		
-    		
+
+
     		 Log.i(TAG, "I420ExternalRender::onNTRenderFrame w=" + width + " h=" + height + " timestamp=" + timestamp);
-    		
+
     		 // copy buffer
-    		
+
     		// test
     		// byte[] test_buffer = new byte[16];
     		// y_buffer_.get(test_buffer);
-    		 
+
     		// Log.i(TAG, "I420ExternalRender::onNTRenderFrame y data:" + bytesToHexString(test_buffer));
-    		 
+
     		// u_buffer_.get(test_buffer);
     		// Log.i(TAG, "I420ExternalRender::onNTRenderFrame u data:" + bytesToHexString(test_buffer));
-    		 
+
     		// v_buffer_.get(test_buffer);
     		// Log.i(TAG, "I420ExternalRender::onNTRenderFrame v data:" + bytesToHexString(test_buffer));
     	}
@@ -1137,7 +1159,7 @@ public class SmartPlayer extends Activity {
 					Log.i(TAG, "截取快照失敗。.");
 				}
 				break;
-				
+
 			case NTSmartEventID.EVENT_DANIULIVE_ERC_PLAYER_RECORDER_START_NEW_FILE:
            	 	Log.i(TAG, "[record]開始一个新的录像文件 : " + param3);
                 break;
@@ -1228,12 +1250,12 @@ public class SmartPlayer extends Activity {
     @Override
     protected void onResume() {
     	Log.i(TAG, "Run into activity onResume++");
-    	
+
     	if(isPlaying && playerHandle != 0)
     	{
     		libPlayer.SmartPlayerSetOrientation(playerHandle, currentOrigentation);
     	}
-    	
+
         super.onResume();
     }
 
@@ -1260,7 +1282,7 @@ public class SmartPlayer extends Activity {
 
 	/**
 	 * 根据目录创建文件夹
-	 * 
+	 *
 	 * @param context
 	 * @param cacheDir
 	 * @return
@@ -1284,7 +1306,7 @@ public class SmartPlayer extends Activity {
 
 	/**
 	 * 检查是否有权限
-	 * 
+	 *
 	 * @param context
 	 * @return
 	 */
