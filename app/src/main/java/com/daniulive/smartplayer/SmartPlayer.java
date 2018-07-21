@@ -10,9 +10,15 @@
 
 package com.daniulive.smartplayer;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 //import java.io.FileOutputStream;
 //import java.io.IOException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,6 +31,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -53,6 +60,9 @@ import com.eventhandle.NTSmartEventID;
 public class SmartPlayer extends Activity {
 
 	private SurfaceView sSurfaceView = null;
+	String host = "192.168.43.207";
+	int port = 6666;
+	Socket socket = null;
 
 	private long playerHandle = 0;
     private final String palyerUrl = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
@@ -347,7 +357,8 @@ public class SmartPlayer extends Activity {
         btnFood.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Toast.makeText(SmartPlayer.this,"已餵食", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SmartPlayer.this,"已餵食",Toast.LENGTH_SHORT).show();
+                new sendCode().start();
             }
         });
 		/*
@@ -1399,4 +1410,38 @@ public class SmartPlayer extends Activity {
 
 		libPlayer.SmartPlayerSetUrl(playerHandle, playbackUrl);
 	}
+	public class sendCode extends Thread {
+        //覆寫Thread方法run()
+        public void run() {
+            try {
+                socket = new Socket(host, port);
+                DataInputStream input = null;
+                DataOutputStream output = null;
+
+                input = new DataInputStream(socket.getInputStream());
+                output = new DataOutputStream(socket.getOutputStream());
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                output.writeUTF("1");
+                //output.writeUTF(code);
+                Log.v("接收訊息",in.readLine());
+                output.flush();
+                output.close();
+                if (input != null)
+                    input.close();
+                if (output != null)
+                    output.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (socket != null) {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }
+    }
 }

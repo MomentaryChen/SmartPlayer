@@ -20,6 +20,12 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class SettimeActivity extends AppCompatActivity {
@@ -27,6 +33,9 @@ public class SettimeActivity extends AppCompatActivity {
     ListView listview;
     private final static String createTable = "CREATE TABLE tableTime(_id interger not null ,hours int ,minutes int)";
     private SQLiteDatabase db=null;
+    String host = "192.168.43.207";
+    int port = 6666;
+    Socket socket = null;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,11 +71,11 @@ public class SettimeActivity extends AppCompatActivity {
                                     if(Integer.valueOf(input.substring(0,2)) >24 || Integer.valueOf(input.substring(2,4))> 60 ){
 
                                         Toast.makeText(getApplicationContext(), "時間輸入錯誤！" + input, Toast.LENGTH_LONG).show();
-                                     }else{
+                                    }else{
                                         Log.v("H",input.substring(0,2));
                                         Log.v("M",input.substring(2,4));
                                         insertTime(Integer.valueOf(input.substring(0,2)),Integer.valueOf(input.substring(2,4)));
-                                     }
+                                    }
                                 }
                             }
                         })
@@ -111,11 +120,11 @@ public class SettimeActivity extends AppCompatActivity {
         Cursor cursor;
         cursor=getAll("tableTime");
         int id=0;
-        if(cursor.getCount() > 0){
+        if(cursor.getCount() > 0 || cursor.getCount()<=4){
             cursor.moveToLast();
             id = cursor.getInt(2);
+            db.execSQL("INSERT INTO tableTime(_id,hours,minutes) values ("+ id +","+hours+","+minutes+")");
         }
-        db.execSQL("INSERT INTO tableTime(_id,hours,minutes) values ("+ id +","+hours+","+minutes+")");
         upDate();
     }
     void deleteTime(int _id){
@@ -128,6 +137,74 @@ public class SettimeActivity extends AppCompatActivity {
     }
     void Destroy(){
         db.close();
+    }
+    public void onStop() {
+        super.onStop();
+        Thread thread = new sendCode();
+        thread.start();
+    }
+    public class sendCode extends Thread{
+        //覆寫Thread方法run()
+        public void run(){
+            try {
+                socket = new Socket( host, port );
+                DataInputStream input = null;
+                DataOutputStream output = null;
+                Cursor cursor;                                          //拿取時間   第一個字餵食 第二個位元幾筆資料
+                cursor=getAll("tableTime");
+                String code ="0";
+                code += Integer.toString(cursor.getCount());
+                cursor.moveToFirst();
+                for(int i=0;i<cursor.getCount();i++){
+                    code += checkTime(cursor.getInt(1),cursor.getInt(2));
+                    cursor.moveToNext();
+                }
+                input = new DataInputStream( socket.getInputStream() );
+                output = new DataOutputStream( socket.getOutputStream() );
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                //output.writeUTF("餵食");
+                output.writeUTF(code);
+                Log.v("接收訊息",in.readLine());
+                output.flush();
+                output.close();
+
+                if ( input != null )
+                    input.close();
+                if ( output != null )
+                    output.close();
+            }
+                catch ( IOException e )
+            {
+                e.printStackTrace();
+            } finally
+            {
+                if ( socket != null ) {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }
+    }
+
+    public String checkTime(int hour,int minute){
+        String str= "" ;
+        if(hour<10){
+            str +="0" + Integer.toString(hour);
+        }else {
+            str += Integer.toString(hour);
+        }
+
+        if(minute<10){
+            str+="0" + Integer.toString(minute);
+        }else{
+            str += Integer.toString(minute);
+        }
+
+        return str;
     }
 
 }
