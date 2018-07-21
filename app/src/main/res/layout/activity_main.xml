@@ -48,18 +48,18 @@
             android:layout_gravity="center">
 
             <Button
-                android:id="@+id/button4"
+                android:id="@+id/album"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="50dp"
-                android:text="Button" />
+                android:text=" 視訊管理 " />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/exit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="50dp"
-                android:text="Button" />
+                android:text="離開誒ㄆ" />
         </LinearLayout>
     </LinearLayout>
 

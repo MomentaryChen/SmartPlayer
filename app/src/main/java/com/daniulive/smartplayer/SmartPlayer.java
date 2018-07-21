@@ -35,6 +35,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -54,7 +55,7 @@ public class SmartPlayer extends Activity {
 	private SurfaceView sSurfaceView = null;
 
 	private long playerHandle = 0;
-
+    private final String palyerUrl = "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
 	private static final int PORTRAIT = 1; // 竖屏
 	private static final int LANDSCAPE = 2; // 横屏
 	private static final String TAG = "SmartPlayer";
@@ -114,7 +115,7 @@ public class SmartPlayer extends Activity {
 	}
 	private void invisibilityAllButton(){
         btnPopInputUrl.setVisibility(View.INVISIBLE);
-        btnMute.setVisibility(View.INVISIBLE);
+        btnMute.setVisibility(View.VISIBLE);
         //btnStartStopPlayback.setVisibility(View.INVISIBLE);
         //btnStartStopRecorder.setVisibility(View.INVISIBLE);
         btnRecoderMgr.setVisibility(View.INVISIBLE);
@@ -124,20 +125,22 @@ public class SmartPlayer extends Activity {
         btnSetPlayBuffer.setVisibility(View.INVISIBLE);
         btnLowLatency.setVisibility(View.INVISIBLE);
         btnRotation.setVisibility(View.INVISIBLE);
+        btnFood.setVisibility(View.VISIBLE);
     }
 
     private void visibilityAllButton(){
-        btnPopInputUrl.setVisibility(View.VISIBLE);
+        btnPopInputUrl.setVisibility(View.INVISIBLE);
         btnMute.setVisibility(View.VISIBLE);
         //btnStartStopPlayback.setVisibility(View.VISIBLE);
         //btnStartStopRecorder.setVisibility(View.VISIBLE);
-        btnRecoderMgr.setVisibility(View.VISIBLE);
-        btnHardwareDecoder.setVisibility(View.VISIBLE);
-        //btnCaptureImage.setVisibility(View.VISIBLE);
-        btnFastStartup.setVisibility(View.VISIBLE);
-        btnSetPlayBuffer.setVisibility(View.VISIBLE);
-        btnLowLatency.setVisibility(View.VISIBLE);
-        btnRotation.setVisibility(View.VISIBLE);
+        btnRecoderMgr.setVisibility(View.INVISIBLE);
+        btnHardwareDecoder.setVisibility(View.INVISIBLE);
+        btnCaptureImage.setVisibility(View.INVISIBLE);
+        btnFastStartup.setVisibility(View.INVISIBLE);
+        btnSetPlayBuffer.setVisibility(View.INVISIBLE);
+        btnLowLatency.setVisibility(View.INVISIBLE);
+        btnRotation.setVisibility(View.INVISIBLE);
+        btnFood.setVisibility(View.INVISIBLE);
     }
 
 	@Override
@@ -146,7 +149,6 @@ public class SmartPlayer extends Activity {
 		Log.i(TAG, "Run into OnCreate++");
 
 		libPlayer = new SmartPlayerJniV2();
-
 		myContext = this.getApplicationContext();
 
 		// 设置快照路径(具体路径可自行设置)
@@ -345,10 +347,9 @@ public class SmartPlayer extends Activity {
         btnFood.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Toast.makeText(SmartPlayer.this,"以餵食", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SmartPlayer.this,"已餵食", Toast.LENGTH_SHORT).show();
             }
         });
-
 		/*
 		txtCopyright = new TextView(this);
 		txtCopyright.setLayoutParams(new LinearLayout.LayoutParams(
@@ -371,6 +372,46 @@ public class SmartPlayer extends Activity {
 		 * LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		 * lLinearLayout.addView(btnPopInputText, 0);
 		 */
+        btnMute = new Button(this);
+
+        if (!isMute) {
+            btnMute.setText("静音 ");
+        } else {
+            btnMute.setText("取消靜音");
+        }
+
+        btnStartStopPlayback = new Button(this);
+        btnStartStopPlayback.setText("开始播放 ");
+        btnStartStopPlayback.setLayoutParams(new LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        lLinearLayout.addView(btnStartStopPlayback);
+
+        /* Start/stop recorder stream button */
+        LinearLayout recorderLinearLayout = new LinearLayout(this);
+        btnStartStopRecorder = new Button(this);
+        btnStartStopRecorder.setText("開始錄影");
+        btnStartStopRecorder.setLayoutParams(new LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        recorderLinearLayout.addView(btnStartStopRecorder);
+
+        btnRecoderMgr = new Button(this);
+        btnRecoderMgr.setText("錄影管理 ");
+        btnRecoderMgr.setLayoutParams(new LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        recorderLinearLayout.addView(btnRecoderMgr);
+        lLinearLayout.addView(recorderLinearLayout);
+
+
+        btnRecoderMgr.setOnClickListener(new ButtonRecorderMangerListener());
+        outLinearLayout.addView(lLinearLayout, 0);
+        outLinearLayout.addView(copyRightLinearLayout, 1);
+        fFrameLayout.addView(outLinearLayout, 1);
+
+        lLayout.addView(fFrameLayout, 0);
+
+        btnMute.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT));
+        lLinearLayout.addView(btnMute);
 
 		btnPopInputUrl = new Button(this);
 		btnPopInputUrl.setText("輸入url");
@@ -379,20 +420,6 @@ public class SmartPlayer extends Activity {
 		lLinearLayout.addView(btnPopInputUrl);
 
 		/* mute button */
-
-
-		btnMute = new Button(this);
-
-		if (!isMute) {
-			btnMute.setText("静音 ");
-		} else {
-			btnMute.setText("取消靜音");
-		}
-
-		btnMute.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT));
-		lLinearLayout.addView(btnMute);
-
 		/* switch url button */
 		/*
 		btnSwitchUrl = new Button(this);
@@ -492,34 +519,7 @@ public class SmartPlayer extends Activity {
 		// buffer setting--
 
 		/* Start playback stream button */
-		btnStartStopPlayback = new Button(this);
-		btnStartStopPlayback.setText("开始播放 ");
-		btnStartStopPlayback.setLayoutParams(new LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		lLinearLayout.addView(btnStartStopPlayback);
 
-		/* Start/stop recorder stream button */
-		LinearLayout recorderLinearLayout = new LinearLayout(this);
-		btnStartStopRecorder = new Button(this);
-		btnStartStopRecorder.setText("開始撥放 ");
-		btnStartStopRecorder.setLayoutParams(new LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		recorderLinearLayout.addView(btnStartStopRecorder);
-
-		btnRecoderMgr = new Button(this);
-		btnRecoderMgr.setText("錄影管理 ");
-		btnRecoderMgr.setLayoutParams(new LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		recorderLinearLayout.addView(btnRecoderMgr);
-		lLinearLayout.addView(recorderLinearLayout);
-
-
-		btnRecoderMgr.setOnClickListener(new ButtonRecorderMangerListener());
-		outLinearLayout.addView(lLinearLayout, 0);
-		outLinearLayout.addView(copyRightLinearLayout, 1);
-		fFrameLayout.addView(outLinearLayout, 1);
-
-		lLayout.addView(fFrameLayout, 0);
 
 		if (isPlaying || isRecording) {
 			btnPopInputUrl.setEnabled(false);
@@ -548,8 +548,10 @@ public class SmartPlayer extends Activity {
 
 		if (isRecording) {
 			btnStartStopRecorder.setText("停止錄影");
+            Toast.makeText(this,"錄影停止",Toast.LENGTH_SHORT);
 		} else {
 			btnStartStopRecorder.setText("開始錄影");
+            Toast.makeText(this,"錄影開始",Toast.LENGTH_SHORT);
 		}
 
 		/* PopInput button listener */
@@ -567,7 +569,8 @@ public class SmartPlayer extends Activity {
 
 		btnPopInputUrl.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				PopFullUrlDialog();
+
+				//PopFullUrlDialog();
 			}
 		});
 
@@ -839,6 +842,8 @@ public class SmartPlayer extends Activity {
 				}
 			}
 		});
+        visibilityAllButton();
+        SaveInputUrl(palyerUrl);
 	}
 
 	public static final String bytesToHexString(byte[] buffer) {
@@ -1275,8 +1280,7 @@ public class SmartPlayer extends Activity {
 			playerHandle = 0;
 		}
 		super.onDestroy();
-		finish();
-		System.exit(0);
+
 	}
 
 	/**

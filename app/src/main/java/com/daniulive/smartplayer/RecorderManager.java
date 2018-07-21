@@ -10,6 +10,7 @@
 
 package com.daniulive.smartplayer;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -79,6 +80,7 @@ public class RecorderManager extends Activity {
              
     }
 	
+	@SuppressLint("NewApi")
 	private void PlayRecFile(String fileName)
 	{
 		if ( fileName == null || fileName.isEmpty() )
@@ -129,6 +131,7 @@ public class RecorderManager extends Activity {
 	 }  
 	
 	
+	@SuppressLint("NewApi")
 	private void GetRecFileList()
 	{
 		if ( recDirPath == null )
@@ -227,7 +230,7 @@ public class RecorderManager extends Activity {
 			 e.printStackTrace();
 		 }		
 	}
-	
+	@SuppressLint("NewApi")
 	private void DelAllRecFiles()
 	{
 		Log.i(Tag, "DelAllRecFiles++++");

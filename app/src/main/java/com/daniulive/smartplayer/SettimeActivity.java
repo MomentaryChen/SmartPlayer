@@ -33,7 +33,7 @@ public class SettimeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_set_time);
         setTitle("餵食時間設定");
         db =this.openOrCreateDatabase("Time.db", MODE_PRIVATE, null);
-        db.execSQL("drop table tableTime");
+        //db.execSQL("drop table tableTime");
         try{
             db.execSQL(createTable);
             db.execSQL("INSERT INTO tableTime(_id,hours,minutes) values (0,0,10)");
