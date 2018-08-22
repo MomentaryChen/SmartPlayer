@@ -1,9 +1,7 @@
 package com.daniulive.smartplayer;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -26,16 +23,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class SettimeActivity extends AppCompatActivity {
     Button add_time;
     ListView listview;
     private final static String createTable = "CREATE TABLE tableTime(_id interger not null ,hours int ,minutes int)";
     private SQLiteDatabase db=null;
-    String host = "192.168.43.207";
-    int port = 6666;
-    Socket socket = null;
+    String code;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,54 +134,18 @@ public class SettimeActivity extends AppCompatActivity {
     }
     public void onStop() {
         super.onStop();
-        Thread thread = new sendCode();
-        thread.start();
-    }
-    public class sendCode extends Thread{
-        //覆寫Thread方法run()
-        public void run(){
-            try {
-                socket = new Socket( host, port );
-                DataInputStream input = null;
-                DataOutputStream output = null;
-                Cursor cursor;                                          //拿取時間   第一個字餵食 第二個位元幾筆資料
-                cursor=getAll("tableTime");
-                String code ="0";
-                code += Integer.toString(cursor.getCount());
-                cursor.moveToFirst();
-                for(int i=0;i<cursor.getCount();i++){
-                    code += checkTime(cursor.getInt(1),cursor.getInt(2));
-                    cursor.moveToNext();
-                }
-                input = new DataInputStream( socket.getInputStream() );
-                output = new DataOutputStream( socket.getOutputStream() );
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                //output.writeUTF("餵食");
-                output.writeUTF(code);
-                Log.v("接收訊息",in.readLine());
-                output.flush();
-                output.close();
+        Cursor cursor;                                          //拿取時間   第一個字餵食 第二個位元幾筆資料
+        cursor=getAll("tableTime");
+        code ="1";
+        code += Integer.toString(cursor.getCount());
 
-                if ( input != null )
-                    input.close();
-                if ( output != null )
-                    output.close();
-            }
-                catch ( IOException e )
-            {
-                e.printStackTrace();
-            } finally
-            {
-                if ( socket != null ) {
-                    try {
-                        socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
+        cursor.moveToFirst();
+        for(int i=0;i<cursor.getCount();i++){
+            code += checkTime(cursor.getInt(1),cursor.getInt(2));
+            cursor.moveToNext();
         }
+        new SendCode(code).start();
+        Log.v("Code:",code);
     }
 
     public String checkTime(int hour,int minute){
