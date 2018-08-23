@@ -20,7 +20,6 @@ public class MyService extends Service
         }
     }
     private LocalBinder mLocBin = new LocalBinder();
-
     @Override
     public IBinder onBind(Intent arg0)
     {
@@ -38,6 +37,7 @@ public class MyService extends Service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
+
         // TODO Auto-generated method stub
         new Thread(new Runnable(){
             public void run() {
@@ -59,7 +59,6 @@ public class MyService extends Service
 
         return super.onStartCommand(intent, flags, startId);
     }
-
     @Override
     public boolean onUnbind(Intent intent)
     {
