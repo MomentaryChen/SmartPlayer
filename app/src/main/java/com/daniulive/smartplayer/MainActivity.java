@@ -29,22 +29,7 @@ public class MainActivity extends AppCompatActivity {
     Button watch, setTime, album, exit ;
     private MyService mMyService = null;
     private String recDir = "/sdcard/daniulive/playrec"; // for recorder path
-
-    /*private ServiceConnection mServiceConnection = new ServiceConnection()
-    {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder serviceBinder)
-        {
-            // TODO Auto-generated method stub
-            mMyService = ((MyService.LocalBinder)serviceBinder).getService();
-        }
-
-        public void onServiceDisconnected(ComponentName name)
-        {
-            // TODO Auto-generated method stub
-            Log.d("Service", "onServiceDisconnected()" + name.getClassName());
-        }
-    };*/
+    //private ServiceConnection mServiceConnection ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,34 +77,20 @@ public class MainActivity extends AppCompatActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-
-        /*Intent it = new Intent(MainActivity.this, MyService.class);
-        startService(it); //開始Service
-
-
-        it = new Intent(MainActivity.this, MyService.class);
-        bindService(it, mServiceConnection, BIND_AUTO_CREATE); //綁定Service
-
-        if (mMyService != null)
-            mMyService.myMethod(); //透過bindService()可以使用Service中的方法*/
-    /*
-        watch.setWidth(metrics.widthPixels/5);
-        watch.setHeight(metrics.heightPixels/5);*/
+        Intent it = new Intent(MainActivity.this, MyService.class);
+        this.startService(it); //開始Service
+        //bindService(it, mServiceConnection, BIND_AUTO_CREATE); //綁定Service
     }
 
-   /* public void onStop() {
+   public void onStop() {
         super.onStop();
-
-
-        unbindService(mServiceConnection); //解除綁定Service
-        mMyService = null;
-        Intent it = new Intent(MainActivity.this, MyService.class);
-        stopService(it); //結束Service
     }
 
     public void onDestroy() {
         super.onDestroy();
-    }*/
+        Intent it = new Intent(MainActivity.this, MyService.class);
+        this.stopService(it); //結束Service
+    }
 
 
 }

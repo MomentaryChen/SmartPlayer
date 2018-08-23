@@ -6,6 +6,9 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.sql.Time;
+import java.util.concurrent.TimeUnit;
+
 
 public class MyService extends Service
 {
@@ -17,11 +20,6 @@ public class MyService extends Service
         }
     }
     private LocalBinder mLocBin = new LocalBinder();
-
-    public void myMethod()
-    {
-        Log.d("Service", "myMethod()");
-    }
 
     @Override
     public IBinder onBind(Intent arg0)
@@ -41,6 +39,24 @@ public class MyService extends Service
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         // TODO Auto-generated method stub
+        new Thread(new Runnable(){
+            public void run() {
+                // TODO Auto-generated method stub
+                while(true)
+                {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    new SendCode("12",getBaseContext()).start();
+                    Log.v("Service-Thread","start");
+
+                    //REST OF CODE HERE//
+                }
+            }
+        }).start();
+
         return super.onStartCommand(intent, flags, startId);
     }
 

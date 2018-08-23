@@ -27,7 +27,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden">
         </activity>
 
-        <service android:name=".MyService" android:enabled="true" />
+        <service android:name="com.daniulive.smartplayer.MyService" android:enabled="true" />
 
         <activity
             android:name="com.daniulive.smartplayer.RecorderManager"

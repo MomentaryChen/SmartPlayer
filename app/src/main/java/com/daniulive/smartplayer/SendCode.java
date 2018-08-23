@@ -1,6 +1,10 @@
 package com.daniulive.smartplayer;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -15,8 +19,32 @@ public class SendCode extends Thread {
     Socket socket = null;
     //覆寫Thread方法run()
     private  String code;
+    Context context =null;
     public SendCode(String code){
-        this.code = code ;
+        this.code = code;
+    }
+
+    public SendCode(String code, Context context){
+        this.code = code;
+        this.context = context ;
+    }
+    public void call() {
+        Log.v("call","start");
+        if(context==null) return;
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        //Intent intent = new Intent(context, XXXActivity.class);//将要跳转的界面
+        Intent intent = new Intent();//只显示通知，无页面跳转
+        builder.setAutoCancel(true);//点击后消失
+        builder.setSmallIcon(R.drawable.cat);//设置通知栏消息标题的头像
+        builder.setDefaults(NotificationCompat.DEFAULT_SOUND);//设置通知铃声
+        builder.setTicker("餓了");
+        builder.setContentTitle("寵物好惡");
+        builder.setContentText("快來餵食寵物喔");
+        //利用PendingIntent来包装我们的intent对象,使其延迟跳转
+        PendingIntent intentPend = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.setContentIntent(intentPend);
+        NotificationManager manager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+        manager.notify(0, builder.build());
     }
     public void run() {
         try {
@@ -29,7 +57,13 @@ public class SendCode extends Thread {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output.writeUTF(code);
             //output.writeUTF(code);
-            Log.v("接收訊息",in.readLine());
+            String getCode = in.readLine();
+            Log.v("接收訊息", getCode);
+
+            if (getCode == "") {
+                this.call();
+            }
+
             output.flush();
             output.close();
 
