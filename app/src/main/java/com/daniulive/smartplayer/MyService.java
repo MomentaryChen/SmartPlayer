@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MyService extends Service
 {
+    private  Thread thread;
     public class LocalBinder extends Binder //宣告一個繼承 Binder 的類別 LocalBinder
     {
         MyService getService()
@@ -39,23 +40,20 @@ public class MyService extends Service
     {
 
         // TODO Auto-generated method stub
-        new Thread(new Runnable(){
+        thread = new Thread(new Runnable(){
             public void run() {
-                // TODO Auto-generated method stub
-                while(true)
-                {
+                while (true){
+                    new SendCode("12",getBaseContext()).start();
+                    Log.v("Service-Thread","start");
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    new SendCode("12",getBaseContext()).start();
-                    Log.v("Service-Thread","start");
-
-                    //REST OF CODE HERE//
                 }
             }
-        }).start();
+        });
+        thread.start();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -67,8 +65,14 @@ public class MyService extends Service
     }
 
     @Override
+    public boolean stopService(Intent name) {
+        thread.stop();
+        return super.stopService(name);
+    }
+
     public void onDestroy()
     {
+        thread.stop();
         super.onDestroy();
         // TODO Auto-generated method stub
     }

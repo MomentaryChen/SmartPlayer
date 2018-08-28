@@ -12,6 +12,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 public class SendCode extends Thread {
     String host = "192.168.43.207";
@@ -24,8 +25,13 @@ public class SendCode extends Thread {
         this.code = code;
     }
 
-    public SendCode(String code, Context context){
-        this.code = code;
+    public SendCode(String code, Context context)  {
+        try {
+            this.code = new String(code.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        ;
         this.context = context ;
     }
     public void call() {
@@ -38,7 +44,7 @@ public class SendCode extends Thread {
         builder.setSmallIcon(R.drawable.cat);//设置通知栏消息标题的头像
         builder.setDefaults(NotificationCompat.DEFAULT_SOUND);//设置通知铃声
         builder.setTicker("餓了");
-        builder.setContentTitle("寵物好惡");
+        builder.setContentTitle("寵物好餓");
         builder.setContentText("快來餵食寵物喔");
         //利用PendingIntent来包装我们的intent对象,使其延迟跳转
         PendingIntent intentPend = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -51,19 +57,18 @@ public class SendCode extends Thread {
             socket = new Socket(host, port);
             DataInputStream input = null;
             DataOutputStream output = null;
-
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output.writeUTF(code);
             //output.writeUTF(code);
             String getCode = in.readLine();
-            Log.v("接收訊息", getCode);
-
-            if (getCode == "") {
+            if(!(getCode==null || getCode =="")){
+                Log.v("接收訊息", getCode);
+            }
+            if (getCode == "111") {
                 this.call();
             }
-
             output.flush();
             output.close();
 

@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private MyService mMyService = null;
     private String recDir = "/sdcard/daniulive/playrec"; // for recorder path
     //private ServiceConnection mServiceConnection ;
-
+    private Intent it;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,12 +40,21 @@ public class MainActivity extends AppCompatActivity {
         album = (Button) findViewById(R.id.album);
         exit = (Button) findViewById(R.id.exit) ;
         setTitle("智慧型寵物寶");
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        it = new Intent(MainActivity.this, MyService.class);
+        this.startService(it); //開始Service
+        //bindService(it, mServiceConnection, BIND_AUTO_CREATE); //綁定Service
+
         watch.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
                 intent.setClass(MainActivity.this,SmartPlayer.class);
                 startActivity(intent);
+
             }
         });
         setTime.setOnClickListener(new Button.OnClickListener() {
@@ -54,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.setClass(MainActivity.this,SettimeActivity.class);
                 startActivity(intent);
+
             }
         });
         album.setOnClickListener(new Button.OnClickListener() {
@@ -63,34 +73,28 @@ public class MainActivity extends AppCompatActivity {
                 intent.setClass(MainActivity.this, RecorderManager.class);
                 intent.putExtra("RecoderDir", recDir);
                 startActivity(intent);
+
             }
         });
 
         exit.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                android.os.Process.killProcess(android.os.Process.myPid());
                 System.exit(0);
             }
         });
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        Intent it = new Intent(MainActivity.this, MyService.class);
-        this.startService(it); //開始Service
-        //bindService(it, mServiceConnection, BIND_AUTO_CREATE); //綁定Service
     }
 
    public void onStop() {
+        //this.stopService(it); //結束Service
         super.onStop();
     }
 
     public void onDestroy() {
         super.onDestroy();
-        Intent it = new Intent(MainActivity.this, MyService.class);
-        this.stopService(it); //結束Service
+
     }
-
-
 }
