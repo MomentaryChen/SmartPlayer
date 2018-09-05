@@ -27,16 +27,18 @@ public class SendCode extends Thread {
 
     public SendCode(String code, Context context)  {
         try {
+            Log.v("SendCode = ",code);
             this.code = new String(code.getBytes("UTF-8"));
+            this.context = context;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        ;
-        this.context = context ;
     }
     public void call() {
-        Log.v("call","start");
-        if(context==null) return;
+        if(context==null) {
+            Log.v("Context is ","null");
+            return;
+        }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         //Intent intent = new Intent(context, XXXActivity.class);//将要跳转的界面
         Intent intent = new Intent();//只显示通知，无页面跳转
@@ -62,11 +64,12 @@ public class SendCode extends Thread {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output.writeUTF(code);
             //output.writeUTF(code);
+            this.sleep(1000);
             String getCode = in.readLine();
             if(!(getCode==null || getCode =="")){
                 Log.v("接收訊息", getCode);
             }
-            if (getCode == "111") {
+            if (getCode.equals("111")) {
                 this.call();
             }
             output.flush();
@@ -77,6 +80,8 @@ public class SendCode extends Thread {
             if (output != null)
                 output.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             if (socket != null) {

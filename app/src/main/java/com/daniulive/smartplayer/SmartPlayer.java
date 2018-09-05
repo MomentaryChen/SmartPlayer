@@ -269,7 +269,6 @@ public class SmartPlayer extends Activity {
 				.setView(inputUrlTxt).setNegativeButton("取消", null);
 		builderUrl.setPositiveButton("確認",
 				new DialogInterface.OnClickListener() {
-
 					public void onClick(DialogInterface dialog, int which) {
 						String fullUrl = inputUrlTxt.getText().toString();
 						SaveInputUrl(fullUrl);
