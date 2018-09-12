@@ -136,7 +136,7 @@ public class SettimeActivity extends AppCompatActivity {
         super.onStop();
         Cursor cursor;                                          //拿取時間   第一個字餵食 第二個位元幾筆資料
         cursor=getAll("tableTime");
-        code ="1";
+        code ="12";
         code += Integer.toString(cursor.getCount());
 
         cursor.moveToFirst();

@@ -66,15 +66,15 @@ public class SendCode extends Thread {
             //output.writeUTF(code);
             this.sleep(1000);
             String getCode = in.readLine();
-            if(!(getCode==null || getCode =="")){
-                Log.v("接收訊息", getCode);
-            }
-            if (getCode.equals("111")) {
+            if((getCode==null || getCode =="")){
+                Log.v("getCode is null", getCode);
+            }else if(getCode.equals("111")){
                 this.call();
             }
             output.flush();
             output.close();
-
+            socket.close();
+            Log.v("Socket ","is close");
             if (input != null)
                 input.close();
             if (output != null)
