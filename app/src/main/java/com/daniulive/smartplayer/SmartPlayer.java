@@ -63,7 +63,7 @@ public class SmartPlayer extends Activity {
 	Socket socket = null;
 
 	private long playerHandle = 0;
-    private final String palyerUrl = "rtmp://192.168.43.31/rtmp/live";
+    private final String playerUrl = "rtmp://192.168.43.31/rtmp/live";
 	private static final int PORTRAIT = 1; // 竖屏
 	private static final int LANDSCAPE = 2; // 横屏
 	private static final String TAG = "SmartPlayer";
@@ -123,7 +123,7 @@ public class SmartPlayer extends Activity {
 	}
 	private void invisibilityAllButton(){
         btnPopInputUrl.setVisibility(View.INVISIBLE);
-        btnMute.setVisibility(View.VISIBLE);
+        btnMute.setVisibility(View.INVISIBLE);
         //btnStartStopPlayback.setVisibility(View.INVISIBLE);
         //btnStartStopRecorder.setVisibility(View.INVISIBLE);
         btnRecoderMgr.setVisibility(View.INVISIBLE);
@@ -138,7 +138,7 @@ public class SmartPlayer extends Activity {
 
     private void visibilityAllButton(){
         btnPopInputUrl.setVisibility(View.INVISIBLE);
-        btnMute.setVisibility(View.VISIBLE);
+        btnMute.setVisibility(View.INVISIBLE);
         //btnStartStopPlayback.setVisibility(View.VISIBLE);
         //btnStartStopRecorder.setVisibility(View.VISIBLE);
         btnRecoderMgr.setVisibility(View.INVISIBLE);
@@ -389,7 +389,7 @@ public class SmartPlayer extends Activity {
         }
 
         btnStartStopPlayback = new Button(this);
-        btnStartStopPlayback.setText("开始播放 ");
+        btnStartStopPlayback.setText("開始播放 ");
         btnStartStopPlayback.setLayoutParams(new LayoutParams(
                 LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         lLinearLayout.addView(btnStartStopPlayback);
@@ -851,7 +851,7 @@ public class SmartPlayer extends Activity {
 			}
 		});
         visibilityAllButton();
-        SaveInputUrl(palyerUrl);
+        SaveInputUrl(playerUrl);
 	}
 
 	public static final String bytesToHexString(byte[] buffer) {
@@ -1131,7 +1131,6 @@ public class SmartPlayer extends Activity {
 		@Override
 		public void onNTSmartEventCallbackV2(long handle, int id, long param1,
 				long param2, String param3, String param4, Object param5) {
-
 			//Log.i(TAG, "EventHandeV2: handle=" + handle + " id:" + id);
 
 			switch (id) {

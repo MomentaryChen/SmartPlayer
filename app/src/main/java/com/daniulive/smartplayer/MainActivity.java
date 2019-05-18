@@ -27,7 +27,7 @@ import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity {
     Button watch, setTime, album, exit ;
-    private MyService mMyService = null;
+    //private MyService mMyService = null;
     private String recDir = "/sdcard/daniulive/playrec"; // for recorder path
     //private ServiceConnection mServiceConnection ;
     private Intent it;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        it = new Intent(MainActivity.this, MyService.class);
+        //it = new Intent(MainActivity.this, MyService.class);
         //bindService(it, mServiceConnection, BIND_AUTO_CREATE); //綁定Service
         watch.setOnClickListener(new Button.OnClickListener(){
             @Override
@@ -80,24 +80,22 @@ public class MainActivity extends AppCompatActivity {
                 System.exit(0);
             }
         });
-
-
     }
     public void onResume() {
         super.onResume();
         Log.v("Activity","Resume");
-        this.startService(it); //開始Service
+        //this.startService(it); //開始Service
     }
 
    public void onPause() {
         Log.v("Activity","Pause");
-        this.stopService(it); //結束Service
+        //this.stopService(it); //結束Service
         super.onPause();
     }
 
     public void onDestroy() {
         Log.v("Activity","Destroy");
-        this.stopService(it); //結束Service
+        //this.stopService(it); //結束Service
         super.onDestroy();
 
     }

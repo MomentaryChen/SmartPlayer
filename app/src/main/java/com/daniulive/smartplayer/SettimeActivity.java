@@ -36,20 +36,17 @@ public class SettimeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_set_time);
         setTitle("餵食時間設定");
         db =this.openOrCreateDatabase("Time.db", MODE_PRIVATE, null);
-        //db.execSQL("drop table tableTime");
         try{
             db.execSQL(createTable);
             db.execSQL("INSERT INTO tableTime(_id,hours,minutes) values (0,0,10)");
             db.execSQL("INSERT INTO tableTime(_id,hours,minutes) values (1,0,10)");
         }catch (Exception e){
-            //getActivity().setTitle("already insert ");
         }
 
         add_time = (Button) findViewById(R.id.btnAddTime);
         add_time.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 final EditText et_hours = new EditText(SettimeActivity.this);
                 et_hours.setHint("0500");
                 new AlertDialog.Builder(SettimeActivity.this).setTitle("輸入時間 EX:1800")

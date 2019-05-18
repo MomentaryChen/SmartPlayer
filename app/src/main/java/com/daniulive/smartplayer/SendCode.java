@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.util.regex.Pattern;
+
 public class SendCode extends Thread {
     String host = "192.168.43.207";
     int port = 6666;
@@ -40,10 +43,16 @@ public class SendCode extends Thread {
             return;
         }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        long[] vibrate_effect =
+                {1000, 500, 1000, 400, 1000, 300, 1000, 200, 1000, 100};
+        // 設定震動效果
+        builder.setVibrate(vibrate_effect);
         //Intent intent = new Intent(context, XXXActivity.class);//将要跳转的界面
         Intent intent = new Intent();//只显示通知，无页面跳转
         builder.setAutoCancel(true);//点击后消失
-        builder.setSmallIcon(R.drawable.cat);//设置通知栏消息标题的头像
+        builder.setLights(Color.GREEN, 1000, 1000);
+        builder.setSmallIcon(R.drawable.cat_icon);//设置通知栏消息标题的头像
+        builder.setWhen(System.currentTimeMillis());
         builder.setDefaults(NotificationCompat.DEFAULT_SOUND);//设置通知铃声
         builder.setTicker("餓了");
         builder.setContentTitle("寵物好餓");
@@ -66,11 +75,13 @@ public class SendCode extends Thread {
             //output.writeUTF(code);
             this.sleep(1000);
             String getCode = in.readLine();
+
             if((getCode==null || getCode =="")){
-                Log.v("getCode is null", getCode);
-            }else if(getCode.equals("111")){
+                //Log.v("getCode is null", getCode);
+            }else if(getCode.charAt(1)=='1'){
                 this.call();
             }
+            Log.v("getCode is ", getCode);
             output.flush();
             output.close();
             socket.close();
